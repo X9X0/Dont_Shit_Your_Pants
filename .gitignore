@@ -1,0 +1,19 @@
+# Build outputs
+app/build/
+build/
+
+# Local config (contains machine-specific SDK path)
+local.properties
+
+# Gradle cache
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+
+# Android
+*.apk
+*.aab
+*.keystore
