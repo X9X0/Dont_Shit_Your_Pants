@@ -128,7 +128,7 @@ class _MenuScreenState extends State<MenuScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Original game menu artwork — crown version when earned
+                  // Original game menu artwork — crown version when Shit King earned
                   AspectRatio(
                     aspectRatio: 640 / 400,
                     child: Image.asset(
