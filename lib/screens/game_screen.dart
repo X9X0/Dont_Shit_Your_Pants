@@ -338,14 +338,16 @@ class _GameScreenState extends State<GameScreen> {
 
                   const SizedBox(height: 6),
 
-                  // Response box
+                  // Response box — at least 2 lines tall, expands to fill remaining space
                   Expanded(
-                    child: RetroBorder(
-                      child: ListView(
-                        controller: _scrollController,
-                        children: [
-                          RetroText(_response,
-                              fontSize: 14, color: RetroColors.textGreen),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 60),
+                      child: RetroBorder(
+                        child: ListView(
+                          controller: _scrollController,
+                          children: [
+                            RetroText(_response,
+                                fontSize: 14, color: RetroColors.textGreen),
                           const SizedBox(height: 8),
                           ..._history.reversed.map((e) => Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
@@ -364,6 +366,7 @@ class _GameScreenState extends State<GameScreen> {
                               )),
                         ],
                       ),
+                    ),
                     ),
                   ),
 

@@ -108,7 +108,7 @@ class _MenuScreenState extends State<MenuScreen> {
     final s = widget.state;
     s.gotAward1 = s.gotAward2 = s.gotAward3 = s.gotAward31 = false;
     s.gotAward5 = s.gotAward6 = s.gotAward61 = s.gotAward62 = false;
-    s.gotAward7 = s.gotAward8 = s.gotCrown = false;
+    s.gotAward7 = s.gotCrown = false;
     for (final k in s.toJson().keys) {
       widget.prefs.setBool(k, false);
     }
@@ -128,11 +128,13 @@ class _MenuScreenState extends State<MenuScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Original game menu artwork
+                  // Original game menu artwork — crown version when earned
                   AspectRatio(
                     aspectRatio: 640 / 400,
                     child: Image.asset(
-                      'assets/scenes/menu.png',
+                      widget.state.gotCrown
+                          ? 'assets/scenes/menu_crown.png'
+                          : 'assets/scenes/menu.png',
                       fit: BoxFit.contain,
                       filterQuality: FilterQuality.none,
                     ),
