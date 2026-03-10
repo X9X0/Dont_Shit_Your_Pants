@@ -302,115 +302,145 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: RetroColors.background,
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Scene image — shows the pink man + room state
-                  AspectRatio(
-                    aspectRatio: 640 / 400,
-                    child: SceneView(state: widget.state),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  // Timer bar
-                  RetroBorder(
-                    borderColor: _timerColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (widget.state.pillsEaten)
-                          const RetroText('💊 pills active',
-                              fontSize: 10, color: RetroColors.textYellow),
-                        const Spacer(),
-                        RetroText('Timer: $_timerText',
-                            fontSize: 13, color: _timerColor),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  // Response box — at least 2 lines tall, expands to fill remaining space
-                  Expanded(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 60),
-                      child: RetroBorder(
-                        child: ListView(
-                          controller: _scrollController,
-                          children: [
-                            RetroText(_response,
-                                fontSize: 14, color: RetroColors.textGreen),
-                          const SizedBox(height: 8),
-                          ..._history.reversed.map((e) => Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    RetroText('> ${e['cmd']}',
-                                        fontSize: 12,
-                                        color: RetroColors.cursor),
-                                    if (e['resp']!.isNotEmpty)
-                                      RetroText(e['resp']!,
-                                          fontSize: 12,
-                                          color: RetroColors.textDim),
-                                  ],
-                                ),
-                              )),
-                        ],
+            child: Column(
+              children: [
+                // Scene image with timer overlaid at top-left
+                AspectRatio(
+                  aspectRatio: 640 / 400,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(child: SceneView(state: widget.state)),
+                      // Timer value overlaid where the artwork "Timer:" label sits
+                      Positioned(
+                        top: 6,
+                        left: 72,
+                        child: Text(
+                          _timerText,
+                          style: TextStyle(
+                            fontFamily: 'Uni05',
+                            fontSize: 11,
+                            color: _timerColor,
+                            height: 1,
+                          ),
+                        ),
                       ),
-                    ),
-                    ),
+                      // Pills indicator overlaid below timer
+                      if (widget.state.pillsEaten)
+                        const Positioned(
+                          top: 20,
+                          left: 4,
+                          child: Text(
+                            '💊',
+                            style: TextStyle(fontSize: 10, height: 1),
+                          ),
+                        ),
+                    ],
                   ),
+                ),
 
-                  // Award popup
-                  if (_awardMessage != null)
-                    AwardPopup(message: _awardMessage!),
+                // Award popup (between scene and text panel)
+                if (_awardMessage != null)
+                  AwardPopup(message: _awardMessage!),
 
-                  const SizedBox(height: 6),
-
-                  // Input row
-                  RetroBorder(
-                    borderColor: RetroColors.cursor,
-                    child: Row(
+                // Unified black text + input panel
+                Expanded(
+                  child: Container(
+                    color: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    child: Column(
                       children: [
-                        const RetroText('> ',
-                            color: RetroColors.cursor, fontSize: 16),
+                        // Scrollable response history
                         Expanded(
-                          child: TextField(
-                            controller: _controller,
-                            focusNode: _focusNode,
-                            autofocus: true,
-                            style: const TextStyle(
-                              fontFamily: 'Uni05',
-                              fontSize: 16,
-                              color: RetroColors.textMain,
-                            ),
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            cursorColor: RetroColors.cursor,
-                            textInputAction: TextInputAction.done,
-                            onSubmitted: _onSubmit,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.deny(RegExp(r'\n')),
+                          child: ListView(
+                            controller: _scrollController,
+                            children: [
+                              Text(
+                                _response,
+                                style: const TextStyle(
+                                  fontFamily: 'Uni05',
+                                  fontSize: 13,
+                                  color: Color(0xFF4AFFA0),
+                                  height: 1.4,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              ..._history.reversed.map((e) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 3),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '> ${e['cmd']}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Uni05',
+                                            fontSize: 11,
+                                            color: Color(0xFF4A9EFF),
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                        if (e['resp']!.isNotEmpty)
+                                          Text(
+                                            e['resp']!,
+                                            style: const TextStyle(
+                                              fontFamily: 'Uni05',
+                                              fontSize: 11,
+                                              color: Color(0xFF888888),
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  )),
                             ],
                           ),
+                        ),
+
+                        // Input row at the bottom of the black panel
+                        Row(
+                          children: [
+                            const Text(
+                              '> ',
+                              style: TextStyle(
+                                fontFamily: 'Uni05',
+                                fontSize: 14,
+                                color: Color(0xFF4A9EFF),
+                              ),
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: _controller,
+                                focusNode: _focusNode,
+                                autofocus: true,
+                                style: const TextStyle(
+                                  fontFamily: 'Uni05',
+                                  fontSize: 14,
+                                  color: Color(0xFFE0E0E0),
+                                ),
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                                cursorColor: const Color(0xFF4A9EFF),
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: _onSubmit,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.deny(RegExp(r'\n')),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
