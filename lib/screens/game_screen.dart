@@ -309,33 +309,43 @@ class _GameScreenState extends State<GameScreen> {
             constraints: const BoxConstraints(maxWidth: 640),
             child: Column(
               children: [
-                // Scene image with timer overlaid at top-left
-                // Aspect ratio crops the bottom black strip (which contains a
-                // baked-in ">" prompt from the original Flash artwork).
+                // Scene image with timer overlaid at top-left.
+                // AspectRatio is 640/365 (not 640/400) to crop the bottom
+                // black strip that has a baked-in ">" from the Flash artwork.
+                // BoxFit.cover + topCenter fills the shorter container and
+                // clips the bottom naturally.
                 AspectRatio(
                   aspectRatio: 640 / 365,
                   child: Stack(
                     children: [
                       Positioned.fill(
                         child: ClipRect(
-                          child: Align(
+                          child: OverflowBox(
+                            maxHeight: double.infinity,
                             alignment: Alignment.topCenter,
-                            heightFactor: 365 / 400,
-                            child: SceneView(state: widget.state),
+                            child: AspectRatio(
+                              aspectRatio: 640 / 400,
+                              child: SceneView(state: widget.state),
+                            ),
                           ),
                         ),
                       ),
-                      // Timer value overlaid where the artwork "Timer:" label sits
-                      Positioned(
-                        top: 6,
-                        left: 68,
-                        child: Text(
-                          _timerText,
-                          style: TextStyle(
-                            fontFamily: 'Uni05',
-                            fontSize: 11,
-                            color: _timerColor,
-                            height: 1,
+                      // Timer value overlaid where the artwork "Timer:" label sits.
+                      // "Timer:" ends at x=86/640 = 13.4% from left.
+                      Positioned.fill(
+                        child: LayoutBuilder(
+                          builder: (_, constraints) => Positioned(
+                            top: 6,
+                            left: constraints.maxWidth * (86 / 640),
+                            child: Text(
+                              _timerText,
+                              style: TextStyle(
+                                fontFamily: 'Uni05',
+                                fontSize: 11,
+                                color: _timerColor,
+                                height: 1,
+                              ),
+                            ),
                           ),
                         ),
                       ),
