@@ -310,15 +310,25 @@ class _GameScreenState extends State<GameScreen> {
             child: Column(
               children: [
                 // Scene image with timer overlaid at top-left
+                // Aspect ratio crops the bottom black strip (which contains a
+                // baked-in ">" prompt from the original Flash artwork).
                 AspectRatio(
-                  aspectRatio: 640 / 400,
+                  aspectRatio: 640 / 370,
                   child: Stack(
                     children: [
-                      Positioned.fill(child: SceneView(state: widget.state)),
+                      Positioned.fill(
+                        child: ClipRect(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            heightFactor: 370 / 400,
+                            child: SceneView(state: widget.state),
+                          ),
+                        ),
+                      ),
                       // Timer value overlaid where the artwork "Timer:" label sits
                       Positioned(
                         top: 6,
-                        left: 72,
+                        left: 64,
                         child: Text(
                           _timerText,
                           style: TextStyle(
